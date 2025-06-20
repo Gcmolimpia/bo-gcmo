@@ -1,0 +1,1304 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Boletim de Ocorrência - GCM de Olímpia</title>
+    <script src="https://cdn.tailwindcss.com">
+document.getElementById('savePdfButton').addEventListener('click', function() {
+    window.print();
+});
+
+</script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .form-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section-header {
+            background-color: #1e3a8a;
+            color: white;
+            border-radius: 8px 8px 0 0;
+        }
+        input, select, textarea {
+            font-size: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+        }
+        .btn-primary {
+            background-color: #1e3a8a;
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #1e40af;
+        }
+        .btn-secondary {
+            background-color: #64748b;
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+        .signature-pad, canvas {
+            touch-action: none;
+        }
+        .signature-pad {
+            border: 1px dashed #94a3b8;
+            background-color: #f8fafc;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+            body {
+                background-color: white;
+            }
+            .form-section {
+                box-shadow: none;
+                margin-bottom: 1rem;
+                page-break-inside: avoid;
+            }
+        }
+        /* Feedback visual para botões em dispositivos móveis */
+        @media (max-width: 768px) {
+            .btn-primary:active, .btn-secondary:active, .btn-danger:active {
+                transform: scale(0.97);
+            }
+        }
+        /* Estilo para feedback de cópia */
+        .copy-feedback {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .copy-feedback.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Cabeçalho -->
+        <div class="form-section mb-6">
+            <div class="section-header p-4 flex flex-col sm:flex-row justify-between items-center">
+                <h1 class="text-2xl font-bold mb-2 sm:mb-0">Boletim de Ocorrência – Guarda Civil Municipal de Olímpia</h1>
+                <div>
+                    <label for="numeroBO" class="font-semibold">Nº do BO:</label>
+                    <input type="text" id="numeroBO" class="ml-2 p-1 text-black" placeholder="Número do BO">
+                </div>
+            </div>
+        </div>
+
+        <form id="boForm">
+            <!-- Dados da Ocorrência -->
+            <div class="form-section mb-6">
+                <div class="section-header p-4">
+                    <h2 class="text-xl font-semibold">1. Dados da Ocorrência</h2>
+                </div>
+                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="col-span-1 md:col-span-2">
+                        <label for="endereco" class="block mb-1 font-medium">Endereço:</label>
+                        <input type="text" id="endereco" name="endereco" class="w-full p-2" required>
+                    </div>
+                    <div>
+                        <label for="codOcorrencia" class="block mb-1 font-medium">Código da Ocorrência:</label>
+                        <input type="text" id="codOcorrencia" name="codOcorrencia" class="w-full p-2" required>
+                    </div>
+                    <div>
+                        <label for="naturezaOcorrencia" class="block mb-1 font-medium">Natureza da Ocorrência:</label>
+                        <input type="text" id="naturezaOcorrencia" name="naturezaOcorrencia" class="w-full p-2" required>
+                    </div>
+                    <div>
+                        <label for="horaFato" class="block mb-1 font-medium">Hora do Fato:</label>
+                        <input type="time" id="horaFato" name="horaFato" class="w-full p-2" required>
+                    </div>
+                    <div>
+                        <label for="horaComunicacao" class="block mb-1 font-medium">Hora da Comunicação:</label>
+                        <input type="time" id="horaComunicacao" name="horaComunicacao" class="w-full p-2" required>
+                    </div>
+                    <div>
+                        <label for="horaLocal" class="block mb-1 font-medium">Hora Local:</label>
+                        <input type="time" id="horaLocal" name="horaLocal" class="w-full p-2" required>
+                    </div>
+                    <div>
+                        <label for="horaFinal" class="block mb-1 font-medium">Hora Final:</label>
+                        <input type="time" id="horaFinal" name="horaFinal" class="w-full p-2" required>
+                    </div>
+                    <div>
+                        <label for="prefixoViatura" class="block mb-1 font-medium">Prefixo da Viatura:</label>
+                        <input type="text" id="prefixoViatura" name="prefixoViatura" class="w-full p-2" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Envolvidos -->
+            <div class="form-section mb-6">
+                <div class="section-header p-4">
+                    <h2 class="text-xl font-semibold">2. Envolvidos</h2>
+                </div>
+                <div id="envolvidosContainer">
+                    <!-- Envolvido 1 -->
+                    <div class="envolvido-item p-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium mb-3">Envolvido 1</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="condicao1" class="block mb-1 font-medium">Condição:</label>
+                                <select id="condicao1" name="condicao1" class="w-full p-2" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Vítima">Vítima</option>
+				    <option value="Autor">Autor</option>
+                                    <option value="Suspeito">Suspeito</option>
+                                    <option value="Testemunha">Testemunha</option>
+				    <option value="I">Indiciado</option>
+				    <option value="S">Sindicado</option>
+				    <option value="PN">Parte não Definida</option>
+				    <option value="PR">Proprietario</option>
+				    <option value="PA">Passageiro</option>
+				    <option value="PE">Pedestre</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="nome1" class="block mb-1 font-medium">Nome:</label>
+                                <input type="text" id="nome1" name="nome1" class="w-full p-2" required>
+                            </div>
+                            <div>
+                                <label for="dataNascimento1" class="block mb-1 font-medium">Data de Nascimento:</label>
+                                <input type="date" id="dataNascimento1" name="dataNascimento1" class="w-full p-2" required>
+                            </div>
+                            <div>
+                                <label for="telefone1" class="block mb-1 font-medium">Telefone:</label>
+                                <input type="tel" id="telefone1" name="telefone1" class="w-full p-2" placeholder="(00) 00000-0000">
+                            </div>
+                            <div>
+                                <label for="nomePai1" class="block mb-1 font-medium">Nome do Pai:</label>
+                                <input type="text" id="nomePai1" name="nomePai1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="nomeMae1" class="block mb-1 font-medium">Nome da Mãe:</label>
+                                <input type="text" id="nomeMae1" name="nomeMae1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="rg1" class="block mb-1 font-medium">RG:</label>
+                                <input type="text" id="rg1" name="rg1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="cpf1" class="block mb-1 font-medium">CPF:</label>
+                                <input type="text" id="cpf1" name="cpf1" class="w-full p-2" maxlength="14" placeholder="000.000.000-00">
+                            </div>
+                            <div>
+                                <label for="cnh1" class="block mb-1 font-medium">CNH:</label>
+                                <input type="text" id="cnh1" name="cnh1" class="w-full p-2">
+                            </div>
+                            <div class="col-span-1 md:col-span-2">
+                                <label for="enderecoEnvolvido1" class="block mb-1 font-medium">Endereço:</label>
+                                <input type="text" id="enderecoEnvolvido1" name="enderecoEnvolvido1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="bairro1" class="block mb-1 font-medium">Bairro:</label>
+                                <input type="text" id="bairro1" name="bairro1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="municipio1" class="block mb-1 font-medium">Município:</label>
+                                <input type="text" id="municipio1" name="municipio1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="uf1" class="block mb-1 font-medium">UF:</label>
+                                <select id="uf1" name="uf1" class="w-full p-2">
+                                    <option value="">Selecione</option>
+                                        <option value="AC">AC</option>
+                                        <option value="AL">AL</option>
+                                        <option value="AP">AP</option>
+                                        <option value="AM">AM</option>
+                                        <option value="BA">BA</option>
+                                        <option value="CE">CE</option>
+                                        <option value="DF">DF</option>
+                                        <option value="ES">ES</option>
+                                        <option value="GO">GO</option>
+                                        <option value="MA">MA</option>
+                                        <option value="MT">MT</option>
+                                        <option value="MS">MS</option>
+                                        <option value="MG">MG</option>
+                                        <option value="PA">PA</option>
+                                        <option value="PB">PB</option>
+                                        <option value="PR">PR</option>
+                                        <option value="PE">PE</option>
+                                        <option value="PI">PI</option>
+                                        <option value="RJ">RJ</option>
+                                        <option value="RN">RN</option>
+                                        <option value="RS">RS</option>
+                                        <option value="RO">RO</option>
+                                        <option value="RR">RR</option>
+                                        <option value="SC">SC</option>
+                                        <option value="SP">SP</option>
+                                        <option value="SE">SE</option>
+                                        <option value="TO">TO</option>
+                                </select>
+                            </div>
+                            <div class="col-span-1 md:col-span-2">
+                                <label for="relato1" class="block mb-1 font-medium">Relato do Envolvido:</label>
+                                <textarea id="relato1" name="relato1" rows="10" class="w-full p-2"></textarea>
+                            </div>
+                            <div class="col-span-1 md:col-span-2">
+                                <label class="block mb-1 font-medium">Assinatura do Envolvido:</label>
+                                <div class="signature-pad w-full h-32 flex items-center justify-center" id="signaturePad1">
+                                    <p class="text-gray-500">Clique para assinar</p>
+                                </div>
+                                <canvas id="signatureCanvas1" class="w-full h-32 hidden"></canvas>
+                                <button type="button" class="btn-secondary px-3 py-1 mt-2 text-sm" id="clearSignature1">Limpar Assinatura</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <button type="button" id="addEnvolvido" class="btn-primary px-4 py-2">+ Adicionar Envolvido</button>
+                </div>
+            </div>
+
+            <!-- Veículos -->
+            <div class="form-section mb-6">
+                <div class="section-header p-4">
+                    <h2 class="text-xl font-semibold">3. Veículos</h2>
+                </div>
+                <div id="veiculosContainer">
+                    <!-- Veículo 1 -->
+                    <div class="veiculo-item p-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium mb-3">Veículo 1</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="especie1" class="block mb-1 font-medium">Espécie:</label>
+                                <select id="especie1" name="especie1" class="w-full p-2">
+                                    <option value="">Selecione</option>
+                                    <option value="Automóvel">Automóvel</option>
+                                    <option value="Motocicleta">Motocicleta</option>
+                                    <option value="Caminhão">Caminhão</option>
+                                    <option value="Ônibus">Ônibus</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="placa1" class="block mb-1 font-medium">Placa:</label>
+                                <input type="text" id="placa1" name="placa1" class="w-full p-2" placeholder="ABC1234">
+                            </div>
+                            <div>
+                                <label for="chassi1" class="block mb-1 font-medium">Chassi:</label>
+                                <input type="text" id="chassi1" name="chassi1" class="w-full p-2" placeholder="9BWZZZ377VT004251">
+                            </div>
+                            <div>
+                                <label for="renavam1" class="block mb-1 font-medium">Renavam:</label>
+                                <input type="text" id="renavam1" name="renavam1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="municipioVeiculo1" class="block mb-1 font-medium">Município:</label>
+                                <input type="text" id="municipioVeiculo1" name="municipioVeiculo1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="ufVeiculo1" class="block mb-1 font-medium">UF:</label>
+                                <select id="ufVeiculo1" name="ufVeiculo1" class="w-full p-2">
+                                    <option value="">Selecione</option>
+                                        <option value="AC">AC</option>
+                                        <option value="AL">AL</option>
+                                        <option value="AP">AP</option>
+                                        <option value="AM">AM</option>
+                                        <option value="BA">BA</option>
+                                        <option value="CE">CE</option>
+                                        <option value="DF">DF</option>
+                                        <option value="ES">ES</option>
+                                        <option value="GO">GO</option>
+                                        <option value="MA">MA</option>
+                                        <option value="MT">MT</option>
+                                        <option value="MS">MS</option>
+                                        <option value="MG">MG</option>
+                                        <option value="PA">PA</option>
+                                        <option value="PB">PB</option>
+                                        <option value="PR">PR</option>
+                                        <option value="PE">PE</option>
+                                        <option value="PI">PI</option>
+                                        <option value="RJ">RJ</option>
+                                        <option value="RN">RN</option>
+                                        <option value="RS">RS</option>
+                                        <option value="RO">RO</option>
+                                        <option value="RR">RR</option>
+                                        <option value="SC">SC</option>
+                                        <option value="SP">SP</option>
+                                        <option value="SE">SE</option>
+                                        <option value="TO">TO</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="marca1" class="block mb-1 font-medium">Marca:</label>
+                                <input type="text" id="marca1" name="marca1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="modelo1" class="block mb-1 font-medium">Modelo:</label>
+                                <input type="text" id="modelo1" name="modelo1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="cor1" class="block mb-1 font-medium">Cor Predominante:</label>
+                                <input type="text" id="cor1" name="cor1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="anoFabricacao1" class="block mb-1 font-medium">Ano de Fabricação:</label>
+                                <input type="number" id="anoFabricacao1" name="anoFabricacao1" class="w-full p-2" min="1900" max="2099">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <button type="button" id="addVeiculo" class="btn-primary px-4 py-2">+ Adicionar Veículo</button>
+                </div>
+            </div>
+
+            <!-- Apreensões -->
+            <div class="form-section mb-6">
+                <div class="section-header p-4">
+                    <h2 class="text-xl font-semibold">4. Apreensões</h2>
+                </div>
+                <div id="apreensaoContainer">
+                    <!-- Apreensão 1 -->
+                    <div class="apreensao-item p-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium mb-3">Apreensão 1</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="objeto1" class="block mb-1 font-medium">Objeto:</label>
+                                <input type="text" id="objeto1" name="objeto1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="quantidade1" class="block mb-1 font-medium">Quantidade:</label>
+                                <input type="number" id="quantidade1" name="quantidade1" class="w-full p-2" min="1">
+                            </div>
+                            <div>
+                                <label for="marcaApreensao1" class="block mb-1 font-medium">Marca:</label>
+                                <input type="text" id="marcaApreensao1" name="marcaApreensao1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="modeloApreensao1" class="block mb-1 font-medium">Modelo:</label>
+                                <input type="text" id="modeloApreensao1" name="modeloApreensao1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="destino1" class="block mb-1 font-medium">Destino:</label>
+                                <input type="text" id="destino1" name="destino1" class="w-full p-2">
+                            </div>
+                            <div>
+                                <label for="recebedor1" class="block mb-1 font-medium">Recebedor:</label>
+                                <input type="text" id="recebedor1" name="recebedor1" class="w-full p-2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <button type="button" id="addApreensao" class="btn-primary px-4 py-2">+ Adicionar Apreensão</button>
+                </div>
+            </div>
+
+            <!-- Relato do Agente -->
+            <div class="form-section mb-6">
+                <div class="section-header p-4">
+                    <h2 class="text-xl font-semibold">5. Relato do Agente</h2>
+                </div>
+                <div class="p-4">
+                    <textarea id="relatoAgente" name="relatoAgente" rows="30" class="w-full p-2" placeholder="Digite o relato detalhado da ocorrência..."></textarea>
+                    
+                    <div class="mt-4">
+                        <label class="block mb-1 font-medium">Assinatura do Agente:</label>
+                        <div class="signature-pad w-full h-32 flex items-center justify-center" id="signaturePadAgente">
+                            <p class="text-gray-500">Clique para assinar</p>
+                        </div>
+                        <canvas id="signatureCanvasAgente" class="w-full h-32 hidden"></canvas>
+                        <button type="button" class="btn-secondary px-3 py-1 mt-2 text-sm" id="clearSignatureAgente">Limpar Assinatura</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="flex flex-wrap gap-4 justify-center mb-8">
+
+<button type="button" id="savePdfButton" class="btn-primary px-6 py-3 text-lg font-semibold no-print">
+    📄 Salvar como PDF
+</button>
+
+                <button type="button" id="copyButton" class="btn-primary px-6 py-3 text-lg font-semibold">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    Copiar Boletim Completo
+                </button>
+                <button type="button" id="printButton" class="btn-secondary px-6 py-3 text-lg font-semibold">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Imprimir
+                </button>
+                <button type="button" id="resetButton" class="btn-danger px-6 py-3 text-lg font-semibold">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Limpar Formulário
+                </button>
+            </div>
+        </form>
+
+        <!-- Feedback de cópia -->
+        <div id="copyFeedback" class="copy-feedback">
+            Boletim copiado com sucesso!
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Formatação de CPF
+            document.querySelectorAll('input[name^="cpf"]').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.slice(0, 11);
+                    
+                    if (value.length > 9) {
+                        value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, '$1.$2.$3-$4');
+                    } else if (value.length > 6) {
+                        value = value.replace(/^(\d{3})(\d{3})(\d{3}).*/, '$1.$2.$3');
+                    } else if (value.length > 3) {
+                        value = value.replace(/^(\d{3})(\d{3}).*/, '$1.$2');
+                    }
+                    
+                    e.target.value = value;
+                });
+            });
+
+            // Formatação de telefone
+            document.querySelectorAll('input[name^="telefone"]').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.slice(0, 11);
+                    
+                    if (value.length > 10) {
+                        value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+                    } else if (value.length > 6) {
+                        value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+                    } else if (value.length > 2) {
+                        value = value.replace(/^(\d{2})(\d{0,5}).*/, '($1) $2');
+                    }
+                    
+                    e.target.value = value;
+                });
+            });
+
+            // Formatação de placa
+            document.querySelectorAll('input[name^="placa"]').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    if (value.length > 7) value = value.slice(0, 7);
+                    e.target.value = value;
+                });
+            });
+
+            // Formatação de chassi
+            document.querySelectorAll('input[name^="chassi"]').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    if (value.length > 17) value = value.slice(0, 17);
+                    e.target.value = value;
+                });
+            });
+
+            // Adicionar Envolvido
+            let envolvidoCount = 1;
+            document.getElementById('addEnvolvido').addEventListener('click', function() {
+                envolvidoCount++;
+                const newEnvolvido = document.createElement('div');
+                newEnvolvido.className = 'envolvido-item p-4 border-b border-gray-200';
+                newEnvolvido.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-medium">Envolvido ${envolvidoCount}</h3>
+                        <button type="button" class="removeEnvolvido btn-danger px-2 py-1 text-sm">Remover</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="condicao${envolvidoCount}" class="block mb-1 font-medium">Condição:</label>
+                            <select id="condicao${envolvidoCount}" name="condicao${envolvidoCount}" class="w-full p-2" required>
+                                <option value="">Selecione</option>
+                                <option value="Vítima">Vítima</option>
+				<option value="Autor">Autor</option>
+                                <option value="Suspeito">Suspeito</option>
+                                <option value="Testemunha">Testemunha</option>
+				<option value="PN">PN</option>
+				<option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="nome${envolvidoCount}" class="block mb-1 font-medium">Nome:</label>
+                            <input type="text" id="nome${envolvidoCount}" name="nome${envolvidoCount}" class="w-full p-2" required>
+                        </div>
+                        <div>
+                            <label for="dataNascimento${envolvidoCount}" class="block mb-1 font-medium">Data de Nascimento:</label>
+                            <input type="date" id="dataNascimento${envolvidoCount}" name="dataNascimento${envolvidoCount}" class="w-full p-2" required>
+                        </div>
+                        <div>
+                            <label for="telefone${envolvidoCount}" class="block mb-1 font-medium">Telefone:</label>
+                            <input type="tel" id="telefone${envolvidoCount}" name="telefone${envolvidoCount}" class="w-full p-2" placeholder="(00) 00000-0000">
+                        </div>
+                        <div>
+                            <label for="nomePai${envolvidoCount}" class="block mb-1 font-medium">Nome do Pai:</label>
+                            <input type="text" id="nomePai${envolvidoCount}" name="nomePai${envolvidoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="nomeMae${envolvidoCount}" class="block mb-1 font-medium">Nome da Mãe:</label>
+                            <input type="text" id="nomeMae${envolvidoCount}" name="nomeMae${envolvidoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="rg${envolvidoCount}" class="block mb-1 font-medium">RG:</label>
+                            <input type="text" id="rg${envolvidoCount}" name="rg${envolvidoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="cpf${envolvidoCount}" class="block mb-1 font-medium">CPF:</label>
+                            <input type="text" id="cpf${envolvidoCount}" name="cpf${envolvidoCount}" class="w-full p-2" maxlength="14" placeholder="000.000.000-00">
+                        </div>
+                        <div>
+                            <label for="cnh${envolvidoCount}" class="block mb-1 font-medium">CNH:</label>
+                            <input type="text" id="cnh${envolvidoCount}" name="cnh${envolvidoCount}" class="w-full p-2">
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label for="enderecoEnvolvido${envolvidoCount}" class="block mb-1 font-medium">Endereço:</label>
+                            <input type="text" id="enderecoEnvolvido${envolvidoCount}" name="enderecoEnvolvido${envolvidoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="bairro${envolvidoCount}" class="block mb-1 font-medium">Bairro:</label>
+                            <input type="text" id="bairro${envolvidoCount}" name="bairro${envolvidoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="municipio${envolvidoCount}" class="block mb-1 font-medium">Município:</label>
+                            <input type="text" id="municipio${envolvidoCount}" name="municipio${envolvidoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="uf${envolvidoCount}" class="block mb-1 font-medium">UF:</label>
+                            <select id="uf${envolvidoCount}" name="uf${envolvidoCount}" class="w-full p-2">
+                                <option value="">Selecione</option>
+                                        <option value="AC">AC</option>
+                                        <option value="AL">AL</option>
+                                        <option value="AP">AP</option>
+                                        <option value="AM">AM</option>
+                                        <option value="BA">BA</option>
+                                        <option value="CE">CE</option>
+                                        <option value="DF">DF</option>
+                                        <option value="ES">ES</option>
+                                        <option value="GO">GO</option>
+                                        <option value="MA">MA</option>
+                                        <option value="MT">MT</option>
+                                        <option value="MS">MS</option>
+                                        <option value="MG">MG</option>
+                                        <option value="PA">PA</option>
+                                        <option value="PB">PB</option>
+                                        <option value="PR">PR</option>
+                                        <option value="PE">PE</option>
+                                        <option value="PI">PI</option>
+                                        <option value="RJ">RJ</option>
+                                        <option value="RN">RN</option>
+                                        <option value="RS">RS</option>
+                                        <option value="RO">RO</option>
+                                        <option value="RR">RR</option>
+                                        <option value="SC">SC</option>
+                                        <option value="SP">SP</option>
+                                        <option value="SE">SE</option>
+                                        <option value="TO">TO</option>
+                            </select>
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label for="relato${envolvidoCount}" class="block mb-1 font-medium">Relato do Envolvido:</label>
+                            <textarea id="relato${envolvidoCount}" name="relato${envolvidoCount}" rows="10" class="w-full p-2"></textarea>
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block mb-1 font-medium">Assinatura do Envolvido:</label>
+                            <div class="signature-pad w-full h-32 flex items-center justify-center" id="signaturePad${envolvidoCount}">
+                                <p class="text-gray-500">Clique para assinar</p>
+                            </div>
+                            <canvas id="signatureCanvas${envolvidoCount}" class="w-full h-32 hidden"></canvas>
+                            <button type="button" class="btn-secondary px-3 py-1 mt-2 text-sm" id="clearSignature${envolvidoCount}">Limpar Assinatura</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('envolvidosContainer').appendChild(newEnvolvido);
+                
+                // Adicionar formatação de CPF para o novo envolvido
+                const cpfInput = document.getElementById(`cpf${envolvidoCount}`);
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.slice(0, 11);
+                    
+                    if (value.length > 9) {
+                        value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, '$1.$2.$3-$4');
+                    } else if (value.length > 6) {
+                        value = value.replace(/^(\d{3})(\d{3})(\d{3}).*/, '$1.$2.$3');
+                    } else if (value.length > 3) {
+                        value = value.replace(/^(\d{3})(\d{3}).*/, '$1.$2');
+                    }
+                    
+                    e.target.value = value;
+                });
+                
+                // Adicionar formatação de telefone para o novo envolvido
+                const telefoneInput = document.getElementById(`telefone${envolvidoCount}`);
+                telefoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.slice(0, 11);
+                    
+                    if (value.length > 10) {
+                        value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+                    } else if (value.length > 6) {
+                        value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+                    } else if (value.length > 2) {
+                        value = value.replace(/^(\d{2})(\d{0,5}).*/, '($1) $2');
+                    }
+                    
+                    e.target.value = value;
+                });
+                
+                // Inicializar assinatura para o novo envolvido
+                initSignature(envolvidoCount);
+            });
+
+            // Remover Envolvido
+            document.getElementById('envolvidosContainer').addEventListener('click', function(e) {
+                if (e.target.classList.contains('removeEnvolvido')) {
+                    e.target.closest('.envolvido-item').remove();
+                }
+            });
+
+            // Adicionar Veículo
+            let veiculoCount = 1;
+            document.getElementById('addVeiculo').addEventListener('click', function() {
+                veiculoCount++;
+                const newVeiculo = document.createElement('div');
+                newVeiculo.className = 'veiculo-item p-4 border-b border-gray-200';
+                newVeiculo.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-medium">Veículo ${veiculoCount}</h3>
+                        <button type="button" class="removeVeiculo btn-danger px-2 py-1 text-sm">Remover</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="especie${veiculoCount}" class="block mb-1 font-medium">Espécie:</label>
+                            <select id="especie${veiculoCount}" name="especie${veiculoCount}" class="w-full p-2">
+                                <option value="">Selecione</option>
+                                <option value="Automóvel">Automóvel</option>
+                                <option value="Motocicleta">Motocicleta</option>
+                                <option value="Caminhão">Caminhão</option>
+                                <option value="Ônibus">Ônibus</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="placa${veiculoCount}" class="block mb-1 font-medium">Placa:</label>
+                            <input type="text" id="placa${veiculoCount}" name="placa${veiculoCount}" class="w-full p-2" placeholder="ABC1234">
+                        </div>
+                        <div>
+                            <label for="chassi${veiculoCount}" class="block mb-1 font-medium">Chassi:</label>
+                            <input type="text" id="chassi${veiculoCount}" name="chassi${veiculoCount}" class="w-full p-2" placeholder="9BWZZZ377VT004251">
+                        </div>
+                        <div>
+                            <label for="renavam${veiculoCount}" class="block mb-1 font-medium">Renavam:</label>
+                            <input type="text" id="renavam${veiculoCount}" name="renavam${veiculoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="municipioVeiculo${veiculoCount}" class="block mb-1 font-medium">Município:</label>
+                            <input type="text" id="municipioVeiculo${veiculoCount}" name="municipioVeiculo${veiculoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="ufVeiculo${veiculoCount}" class="block mb-1 font-medium">UF:</label>
+                            <select id="ufVeiculo${veiculoCount}" name="ufVeiculo${veiculoCount}" class="w-full p-2">
+                                <option value="">Selecione</option>
+                                        <option value="AC">AC</option>
+                                        <option value="AL">AL</option>
+                                        <option value="AP">AP</option>
+                                        <option value="AM">AM</option>
+                                        <option value="BA">BA</option>
+                                        <option value="CE">CE</option>
+                                        <option value="DF">DF</option>
+                                        <option value="ES">ES</option>
+                                        <option value="GO">GO</option>
+                                        <option value="MA">MA</option>
+                                        <option value="MT">MT</option>
+                                        <option value="MS">MS</option>
+                                        <option value="MG">MG</option>
+                                        <option value="PA">PA</option>
+                                        <option value="PB">PB</option>
+                                        <option value="PR">PR</option>
+                                        <option value="PE">PE</option>
+                                        <option value="PI">PI</option>
+                                        <option value="RJ">RJ</option>
+                                        <option value="RN">RN</option>
+                                        <option value="RS">RS</option>
+                                        <option value="RO">RO</option>
+                                        <option value="RR">RR</option>
+                                        <option value="SC">SC</option>
+                                        <option value="SP">SP</option>
+                                        <option value="SE">SE</option>
+                                        <option value="TO">TO</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="marca${veiculoCount}" class="block mb-1 font-medium">Marca:</label>
+                            <input type="text" id="marca${veiculoCount}" name="marca${veiculoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="modelo${veiculoCount}" class="block mb-1 font-medium">Modelo:</label>
+                            <input type="text" id="modelo${veiculoCount}" name="modelo${veiculoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="cor${veiculoCount}" class="block mb-1 font-medium">Cor Predominante:</label>
+                            <input type="text" id="cor${veiculoCount}" name="cor${veiculoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="anoFabricacao${veiculoCount}" class="block mb-1 font-medium">Ano de Fabricação:</label>
+                            <input type="number" id="anoFabricacao${veiculoCount}" name="anoFabricacao${veiculoCount}" class="w-full p-2" min="1900" max="2099">
+                        </div>
+                    </div>
+                `;
+                document.getElementById('veiculosContainer').appendChild(newVeiculo);
+                
+                // Adicionar formatação de placa para o novo veículo
+                const placaInput = document.getElementById(`placa${veiculoCount}`);
+                placaInput.addEventListener('input', function(e) {
+                    let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    if (value.length > 7) value = value.slice(0, 7);
+                    e.target.value = value;
+                });
+                
+                // Adicionar formatação de chassi para o novo veículo
+                const chassiInput = document.getElementById(`chassi${veiculoCount}`);
+                chassiInput.addEventListener('input', function(e) {
+                    let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    if (value.length > 17) value = value.slice(0, 17);
+                    e.target.value = value;
+                });
+            });
+
+            // Remover Veículo
+            document.getElementById('veiculosContainer').addEventListener('click', function(e) {
+                if (e.target.classList.contains('removeVeiculo')) {
+                    e.target.closest('.veiculo-item').remove();
+                }
+            });
+
+            // Adicionar Apreensão
+            let apreensaoCount = 1;
+            document.getElementById('addApreensao').addEventListener('click', function() {
+                apreensaoCount++;
+                const newApreensao = document.createElement('div');
+                newApreensao.className = 'apreensao-item p-4 border-b border-gray-200';
+                newApreensao.innerHTML = `
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-lg font-medium">Apreensão ${apreensaoCount}</h3>
+                        <button type="button" class="removeApreensao btn-danger px-2 py-1 text-sm">Remover</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="objeto${apreensaoCount}" class="block mb-1 font-medium">Objeto:</label>
+                            <input type="text" id="objeto${apreensaoCount}" name="objeto${apreensaoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="quantidade${apreensaoCount}" class="block mb-1 font-medium">Quantidade:</label>
+                            <input type="number" id="quantidade${apreensaoCount}" name="quantidade${apreensaoCount}" class="w-full p-2" min="1">
+                        </div>
+                        <div>
+                            <label for="marcaApreensao${apreensaoCount}" class="block mb-1 font-medium">Marca:</label>
+                            <input type="text" id="marcaApreensao${apreensaoCount}" name="marcaApreensao${apreensaoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="modeloApreensao${apreensaoCount}" class="block mb-1 font-medium">Modelo:</label>
+                            <input type="text" id="modeloApreensao${apreensaoCount}" name="modeloApreensao${apreensaoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="destino${apreensaoCount}" class="block mb-1 font-medium">Destino:</label>
+                            <input type="text" id="destino${apreensaoCount}" name="destino${apreensaoCount}" class="w-full p-2">
+                        </div>
+                        <div>
+                            <label for="recebedor${apreensaoCount}" class="block mb-1 font-medium">Recebedor:</label>
+                            <input type="text" id="recebedor${apreensaoCount}" name="recebedor${apreensaoCount}" class="w-full p-2">
+                        </div>
+                    </div>
+                `;
+                document.getElementById('apreensaoContainer').appendChild(newApreensao);
+            });
+
+            // Remover Apreensão
+            document.getElementById('apreensaoContainer').addEventListener('click', function(e) {
+                if (e.target.classList.contains('removeApreensao')) {
+                    e.target.closest('.apreensao-item').remove();
+                }
+            });
+
+            // Inicializar assinaturas
+            function initSignature(id) {
+                const signaturePad = document.getElementById(`signaturePad${id}`);
+                const signatureCanvas = document.getElementById(`signatureCanvas${id}`);
+                const clearButton = document.getElementById(`clearSignature${id}`);
+                
+                if (!signaturePad || !signatureCanvas || !clearButton) return;
+                
+                let isDrawing = false;
+                let ctx = signatureCanvas.getContext('2d');
+                
+                signaturePad.addEventListener('click', function() {
+                    signaturePad.classList.add('hidden');
+                    signatureCanvas.classList.remove('hidden');
+                    
+                    // Ajustar o tamanho do canvas
+                    signatureCanvas.width = signatureCanvas.offsetWidth;
+                    signatureCanvas.height = signatureCanvas.offsetHeight;
+                    
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                    ctx.strokeStyle = '#000';
+                });
+                
+                // Eventos para mouse
+                signatureCanvas.addEventListener('mousedown', startDrawing);
+                signatureCanvas.addEventListener('mousemove', draw);
+                signatureCanvas.addEventListener('mouseup', stopDrawing);
+                signatureCanvas.addEventListener('mouseout', stopDrawing);
+                
+                // Eventos para touch (dispositivos móveis)
+                signatureCanvas.addEventListener('touchstart', handleTouchStart, {passive: false});
+                signatureCanvas.addEventListener('touchmove', handleTouchMove, {passive: false});
+                signatureCanvas.addEventListener('touchend', handleTouchEnd, {passive: false});
+                
+                clearButton.addEventListener('click', function() {
+                    ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+                    signatureCanvas.classList.add('hidden');
+                    signaturePad.classList.remove('hidden');
+                });
+                
+                function startDrawing(e) {
+                    isDrawing = true;
+                    draw(e);
+                }
+                
+                function draw(e) {
+                    if (!isDrawing) return;
+                    
+                    let x, y;
+                    
+                    if (e.type.includes('mouse')) {
+                        x = e.offsetX;
+                        y = e.offsetY;
+                    } else {
+                        const rect = signatureCanvas.getBoundingClientRect();
+                        const touch = e.touches[0];
+                        x = touch.clientX - rect.left;
+                        y = touch.clientY - rect.top;
+                    }
+                    
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                }
+                
+                function stopDrawing() {
+                    isDrawing = false;
+                    ctx.beginPath();
+                }
+                
+                // Funções específicas para eventos de toque
+                function handleTouchStart(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const rect = signatureCanvas.getBoundingClientRect();
+                    const x = touch.clientX - rect.left;
+                    const y = touch.clientY - rect.top;
+                    
+                    isDrawing = true;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                }
+                
+                function handleTouchMove(e) {
+                    e.preventDefault();
+                    if (!isDrawing) return;
+                    
+                    const touch = e.touches[0];
+                    const rect = signatureCanvas.getBoundingClientRect();
+                    const x = touch.clientX - rect.left;
+                    const y = touch.clientY - rect.top;
+                    
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                }
+                
+                function handleTouchEnd(e) {
+                    e.preventDefault();
+                    isDrawing = false;
+                    ctx.beginPath();
+                }
+            }
+            
+            // Inicializar assinatura do primeiro envolvido
+            initSignature(1);
+            
+            // Inicializar assinatura do agente
+            const signaturePadAgente = document.getElementById('signaturePadAgente');
+            const signatureCanvasAgente = document.getElementById('signatureCanvasAgente');
+            const clearButtonAgente = document.getElementById('clearSignatureAgente');
+            
+            let isDrawingAgente = false;
+            let ctxAgente = signatureCanvasAgente.getContext('2d');
+            
+            signaturePadAgente.addEventListener('click', function() {
+                signaturePadAgente.classList.add('hidden');
+                signatureCanvasAgente.classList.remove('hidden');
+                
+                // Ajustar o tamanho do canvas
+                signatureCanvasAgente.width = signatureCanvasAgente.offsetWidth;
+                signatureCanvasAgente.height = signatureCanvasAgente.offsetHeight;
+                
+                ctxAgente.lineWidth = 2;
+                ctxAgente.lineCap = 'round';
+                ctxAgente.strokeStyle = '#000';
+            });
+            
+            // Eventos para mouse
+            signatureCanvasAgente.addEventListener('mousedown', startDrawingAgente);
+            signatureCanvasAgente.addEventListener('mousemove', drawAgente);
+            signatureCanvasAgente.addEventListener('mouseup', stopDrawingAgente);
+            signatureCanvasAgente.addEventListener('mouseout', stopDrawingAgente);
+            
+            // Eventos para touch (dispositivos móveis)
+            signatureCanvasAgente.addEventListener('touchstart', handleTouchStartAgente, {passive: false});
+            signatureCanvasAgente.addEventListener('touchmove', handleTouchMoveAgente, {passive: false});
+            signatureCanvasAgente.addEventListener('touchend', handleTouchEndAgente, {passive: false});
+            
+            clearButtonAgente.addEventListener('click', function() {
+                ctxAgente.clearRect(0, 0, signatureCanvasAgente.width, signatureCanvasAgente.height);
+                signatureCanvasAgente.classList.add('hidden');
+                signaturePadAgente.classList.remove('hidden');
+            });
+            
+            function startDrawingAgente(e) {
+                isDrawingAgente = true;
+                drawAgente(e);
+            }
+            
+            function drawAgente(e) {
+                if (!isDrawingAgente) return;
+                
+                let x, y;
+                
+                if (e.type.includes('mouse')) {
+                    x = e.offsetX;
+                    y = e.offsetY;
+                } else {
+                    const rect = signatureCanvasAgente.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    x = touch.clientX - rect.left;
+                    y = touch.clientY - rect.top;
+                }
+                
+                ctxAgente.lineTo(x, y);
+                ctxAgente.stroke();
+                ctxAgente.beginPath();
+                ctxAgente.moveTo(x, y);
+            }
+            
+            function stopDrawingAgente() {
+                isDrawingAgente = false;
+                ctxAgente.beginPath();
+            }
+            
+            // Funções específicas para eventos de toque do agente
+            function handleTouchStartAgente(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const rect = signatureCanvasAgente.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                
+                isDrawingAgente = true;
+                ctxAgente.beginPath();
+                ctxAgente.moveTo(x, y);
+            }
+            
+            function handleTouchMoveAgente(e) {
+                e.preventDefault();
+                if (!isDrawingAgente) return;
+                
+                const touch = e.touches[0];
+                const rect = signatureCanvasAgente.getBoundingClientRect();
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+                
+                ctxAgente.lineTo(x, y);
+                ctxAgente.stroke();
+            }
+            
+            function handleTouchEndAgente(e) {
+                e.preventDefault();
+                isDrawingAgente = false;
+                ctxAgente.beginPath();
+            }
+
+            // Botão Copiar - Melhorado para dispositivos móveis
+            document.getElementById('copyButton').addEventListener('click', function() {
+                // Gerar conteúdo para cópia
+                let content = `BOLETIM DE OCORRÊNCIA Nº ${document.getElementById('numeroBO').value || '___________'}\n\n`;
+                
+                // Dados da Ocorrência
+                content += `DADOS DA OCORRÊNCIA\n`;
+                content += `Endereço: ${document.getElementById('endereco').value || '___________'}\n`;
+                content += `Código da Ocorrência: ${document.getElementById('codOcorrencia').value || '___________'}\n`;
+                content += `Natureza da Ocorrência: ${document.getElementById('naturezaOcorrencia').value || '___________'}\n`;
+                content += `Hora do Fato: ${document.getElementById('horaFato').value || '___________'}\n`;
+                content += `Hora da Comunicação: ${document.getElementById('horaComunicacao').value || '___________'}\n`;
+                content += `Hora Local: ${document.getElementById('horaLocal').value || '___________'}\n`;
+                content += `Hora Final: ${document.getElementById('horaFinal').value || '___________'}\n`;
+                content += `Prefixo da Viatura: ${document.getElementById('prefixoViatura').value || '___________'}\n\n`;
+                
+                // Envolvidos
+                content += `QUALIFICAÇÃO DOS ENVOLVIDOS\n`;
+                const envolvidos = document.querySelectorAll('.envolvido-item');
+                envolvidos.forEach((envolvido, index) => {
+                    const num = index + 1;
+                    content += `Envolvido ${num}\n`;
+                    content += `Condição: ${document.getElementById(`condicao${num}`)?.value || '___________'}\n`;
+                    content += `Nome: ${document.getElementById(`nome${num}`)?.value || '___________'}\n`;
+                    content += `Data de Nascimento: ${document.getElementById(`dataNascimento${num}`)?.value || '___________'}\n`;
+                    content += `Telefone: ${document.getElementById(`telefone${num}`)?.value || '___________'}\n`;
+                    content += `Nome do Pai: ${document.getElementById(`nomePai${num}`)?.value || '___________'}\n`;
+                    content += `Nome da Mãe: ${document.getElementById(`nomeMae${num}`)?.value || '___________'}\n`;
+                    content += `RG: ${document.getElementById(`rg${num}`)?.value || '___________'}\n`;
+                    content += `CPF: ${document.getElementById(`cpf${num}`)?.value || '___________'}\n`;
+                    content += `CNH: ${document.getElementById(`cnh${num}`)?.value || '___________'}\n`;
+                    content += `Endereço: ${document.getElementById(`enderecoEnvolvido${num}`)?.value || '___________'}\n`;
+                    content += `Bairro: ${document.getElementById(`bairro${num}`)?.value || '___________'}\n`;
+                    content += `Município: ${document.getElementById(`municipio${num}`)?.value || '___________'}\n`;
+                    content += `UF: ${document.getElementById(`uf${num}`)?.value || '___________'}\n`;
+                    content += `Relato: ${document.getElementById(`relato${num}`)?.value || '___________'}\n\n`;
+                });
+                
+                // Veículos
+                content += `DADOS DOS VEÍCULOS\n`;
+                const veiculos = document.querySelectorAll('.veiculo-item');
+                veiculos.forEach((veiculo, index) => {
+                    const num = index + 1;
+                    content += `Veículo ${num}\n`;
+                    content += `Espécie: ${document.getElementById(`especie${num}`)?.value || '___________'}\n`;
+                    content += `Placa: ${document.getElementById(`placa${num}`)?.value || '___________'}\n`;
+                    content += `Chassi: ${document.getElementById(`chassi${num}`)?.value || '___________'}\n`;
+                    content += `Renavam: ${document.getElementById(`renavam${num}`)?.value || '___________'}\n`;
+                    content += `Município: ${document.getElementById(`municipioVeiculo${num}`)?.value || '___________'}\n`;
+                    content += `UF: ${document.getElementById(`ufVeiculo${num}`)?.value || '___________'}\n`;
+                    content += `Marca: ${document.getElementById(`marca${num}`)?.value || '___________'}\n`;
+                    content += `Modelo: ${document.getElementById(`modelo${num}`)?.value || '___________'}\n`;
+                    content += `Cor Predominante: ${document.getElementById(`cor${num}`)?.value || '___________'}\n`;
+                    content += `Ano de Fabricação: ${document.getElementById(`anoFabricacao${num}`)?.value || '___________'}\n\n`;
+                });
+                
+                // Apreensões
+                content += `APREENSÕES\n`;
+                const apreensoes = document.querySelectorAll('.apreensao-item');
+                apreensoes.forEach((apreensao, index) => {
+                    const num = index + 1;
+                    content += `Apreensão ${num}\n`;
+                    content += `Objeto: ${document.getElementById(`objeto${num}`)?.value || '___________'}\n`;
+                    content += `Quantidade: ${document.getElementById(`quantidade${num}`)?.value || '___________'}\n`;
+                    content += `Marca: ${document.getElementById(`marcaApreensao${num}`)?.value || '___________'}\n`;
+                    content += `Modelo: ${document.getElementById(`modeloApreensao${num}`)?.value || '___________'}\n`;
+                    content += `Destino: ${document.getElementById(`destino${num}`)?.value || '___________'}\n`;
+                    content += `Recebedor: ${document.getElementById(`recebedor${num}`)?.value || '___________'}\n\n`;
+                });
+                
+                // Relato do Agente
+                content += `RELATO DO AGENTE\n`;
+                content += `${document.getElementById('relatoAgente').value || '___________'}\n`;
+                
+                // Usar a API de clipboard para copiar o texto
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(content)
+                        .then(() => {
+                            showCopyFeedback();
+                        })
+                        .catch(err => {
+                            console.error('Erro ao copiar: ', err);
+                            fallbackCopyTextToClipboard(content);
+                        });
+                } else {
+                    fallbackCopyTextToClipboard(content);
+                }
+            });
+            
+            // Método alternativo para copiar texto em navegadores que não suportam a API Clipboard
+            function fallbackCopyTextToClipboard(text) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                
+                // Tornar o textarea invisível mas ainda presente no DOM
+                textArea.style.position = 'fixed';
+                textArea.style.top = '0';
+                textArea.style.left = '0';
+                textArea.style.width = '2em';
+                textArea.style.height = '2em';
+                textArea.style.padding = '0';
+                textArea.style.border = 'none';
+                textArea.style.outline = 'none';
+                textArea.style.boxShadow = 'none';
+                textArea.style.background = 'transparent';
+                
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        showCopyFeedback();
+                    }
+                } catch (err) {
+                    console.error('Erro ao copiar: ', err);
+                    alert('Não foi possível copiar o texto. Por favor, tente novamente.');
+                }
+                
+                document.body.removeChild(textArea);
+            }
+            
+            // Feedback visual para cópia
+            function showCopyFeedback() {
+                const feedback = document.getElementById('copyFeedback');
+                feedback.classList.add('show');
+                
+                setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Botão de impressão
+            document.getElementById('printButton').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Botão de limpar formulário - Melhorado para limpar todos os campos
+            document.getElementById('resetButton').addEventListener('click', function() {
+                // Limpar campos principais
+                document.getElementById('numeroBO').value = '';
+                document.getElementById('endereco').value = '';
+                document.getElementById('codOcorrencia').value = '';
+                document.getElementById('naturezaOcorrencia').value = '';
+                document.getElementById('horaFato').value = '';
+                document.getElementById('horaComunicacao').value = '';
+                document.getElementById('horaLocal').value = '';
+                document.getElementById('horaFinal').value = '';
+                document.getElementById('prefixoViatura').value = '';
+                document.getElementById('relatoAgente').value = '';
+                
+                // Limpar campos do primeiro envolvido (não removê-lo)
+                document.getElementById('condicao1').value = '';
+                document.getElementById('nome1').value = '';
+                document.getElementById('dataNascimento1').value = '';
+                document.getElementById('telefone1').value = '';
+                document.getElementById('nomePai1').value = '';
+                document.getElementById('nomeMae1').value = '';
+                document.getElementById('rg1').value = '';
+                document.getElementById('cpf1').value = '';
+                document.getElementById('cnh1').value = '';
+                document.getElementById('enderecoEnvolvido1').value = '';
+                document.getElementById('bairro1').value = '';
+                document.getElementById('municipio1').value = '';
+                document.getElementById('uf1').value = 'SP';
+                document.getElementById('relato1').value = '';
+                
+                // Limpar assinatura do primeiro envolvido
+                if (document.getElementById('signatureCanvas1')) {
+                    const ctx1 = document.getElementById('signatureCanvas1').getContext('2d');
+                    ctx1.clearRect(0, 0, document.getElementById('signatureCanvas1').width, document.getElementById('signatureCanvas1').height);
+                    document.getElementById('signatureCanvas1').classList.add('hidden');
+                    document.getElementById('signaturePad1').classList.remove('hidden');
+                }
+                
+                // Limpar campos do primeiro veículo (não removê-lo)
+                document.getElementById('especie1').value = '';
+                document.getElementById('placa1').value = '';
+                document.getElementById('chassi1').value = '';
+                document.getElementById('renavam1').value = '';
+                document.getElementById('municipioVeiculo1').value = '';
+                document.getElementById('ufVeiculo1').value = 'SP';
+                document.getElementById('marca1').value = '';
+                document.getElementById('modelo1').value = '';
+                document.getElementById('cor1').value = '';
+                document.getElementById('anoFabricacao1').value = '';
+                
+                // Limpar campos da primeira apreensão (não removê-la)
+                document.getElementById('objeto1').value = '';
+                document.getElementById('quantidade1').value = '';
+                document.getElementById('marcaApreensao1').value = '';
+                document.getElementById('modeloApreensao1').value = '';
+                document.getElementById('destino1').value = '';
+                document.getElementById('recebedor1').value = '';
+                
+                // Limpar assinatura do agente
+                const ctxAgente = document.getElementById('signatureCanvasAgente').getContext('2d');
+                ctxAgente.clearRect(0, 0, document.getElementById('signatureCanvasAgente').width, document.getElementById('signatureCanvasAgente').height);
+                document.getElementById('signatureCanvasAgente').classList.add('hidden');
+                document.getElementById('signaturePadAgente').classList.remove('hidden');
+                
+                // Remover envolvidos adicionais
+                const envolvidos = document.querySelectorAll('.envolvido-item');
+                for (let i = 1; i < envolvidos.length; i++) {
+                    envolvidos[i].remove();
+                }
+                envolvidoCount = 1;
+                
+                // Remover veículos adicionais
+                const veiculos = document.querySelectorAll('.veiculo-item');
+                for (let i = 1; i < veiculos.length; i++) {
+                    veiculos[i].remove();
+                }
+                veiculoCount = 1;
+                
+                // Remover apreensões adicionais
+                const apreensoes = document.querySelectorAll('.apreensao-item');
+                for (let i = 1; i < apreensoes.length; i++) {
+                    apreensoes[i].remove();
+                }
+                apreensaoCount = 1;
+                
+                // Feedback visual
+                alert('Formulário limpo com sucesso!');
+            });
+        });
+    
+document.getElementById('savePdfButton').addEventListener('click', function() {
+    window.print();
+});
+
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'94c4b684a4101aa9',t:'MTc0OTM0NzE2MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();
+document.getElementById('savePdfButton').addEventListener('click', function() {
+    window.print();
+});
+
+</script></body>
+</html>
+R
